@@ -79,14 +79,14 @@ public class VelocityExecutionComponentTest {
     final MavenProject mp = new MavenProject(model);
     engineSupplier.setProject(mp);
     testClasses = target.resolve("test-classes");
-    engineSupplier.setSourcePathRoot(testClasses.toFile());
-    engineSupplier.setExecutionSource(testClasses.resolve("execFiles").toFile());
+    engineSupplier.setSourcePathRoot(testClasses);
+    engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
     final Path generated = target.resolve("generated-sources");
     Files.createDirectories(generated);
     final Path generatedResources = target.resolve("generated-resources");
     Files.createDirectories(generatedResources);
-    //    engineSupplier.setResourcesOutputDirectory(generatedResources.toFile());
-    engineSupplier.setSourcesOutputDirectory(generated.toFile());
+    //    engineSupplier.setResourcesOutputDirectory(generatedResources.)
+    engineSupplier.setSourcesOutputDirectory(generated);
   }
 
   @Test
@@ -98,7 +98,7 @@ public class VelocityExecutionComponentTest {
   @Test
   public void testCreateEngine() throws Exception {
     final VelocityEngine e = ((VelocityExecutionComponent) engineSupplier.get())
-        .createEngine(Paths.get(".").toAbsolutePath().toString());
+        .createEngine(Paths.get(".").toRealPath());
     assertNotNull(e);
   }
 
@@ -106,13 +106,13 @@ public class VelocityExecutionComponentTest {
   public void testExecuteNoLogger() throws TemplatingEngineException, IOException {
     final Path empty = testClasses.resolve("execFiles").resolve("empty");
     Files.createDirectories(empty);
-    engineSupplier.setExecutionSource(empty.toFile());
+    engineSupplier.setExecutionSource(empty);
     assertFalse(engineSupplier.get().execute().isPresent()); // False when no files
   }
 
   @Test
   public void testExecuteNoLoggerWithFile() throws Exception {
-    engineSupplier.setExecutionSource(testClasses.resolve("execFiles").toFile());
+    engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
     assertTrue(engineSupplier.get().execute().isPresent()); // False when no files
   }
 

@@ -25,7 +25,7 @@ import org.apache.maven.project.MavenProject;
 
 public class DummyPassThru extends AbstractTemplatingEngine<DummyPassThru> {
 
-  public DummyPassThru(final File src, final String sourcePathRoot, final boolean includeDotFiles,
+  public DummyPassThru(final Path src, final Path sourcePathRoot, final boolean includeDotFiles,
       final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final File sourceOutputDir,
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
       final Optional<Path> prefixPath) {
@@ -34,12 +34,12 @@ public class DummyPassThru extends AbstractTemplatingEngine<DummyPassThru> {
   }
 
   @Override
-  public DummyPassThru createEngine(final String sourcePathRoot) throws Exception {
+  public DummyPassThru createEngine(final Path sourcePathRoot) throws Exception {
     return this;
   }
 
   @Override
-  public void writeTemplate(final DummyPassThru engine, final String canoTemplate, final File outFile)
+  public void writeTemplate(final DummyPassThru engine, final String canoTemplate, final Path outFile)
       throws Exception {
 
   }

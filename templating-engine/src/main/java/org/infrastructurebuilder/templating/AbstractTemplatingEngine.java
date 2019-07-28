@@ -44,6 +44,11 @@ import org.infrastructurebuilder.util.config.StringListSupplier;
 import org.infrastructurebuilder.util.files.DefaultIBDirScannerSupplier;
 import org.infrastructurebuilder.util.files.IBDirScannerSupplier;
 
+/**
+ * @author mykel.alvis
+ *
+ * @param <T>
+ */
 abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
 
   public final static List<String> SCM_NAMES = Arrays.asList(".svn", ".git", "cvs");
@@ -76,11 +81,20 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         .collect(Collectors.toList()).toArray(new String[0]));
   }
 
-  public static final Path getOutputFile(final Path vmFile, final Path sources, final Path outputDirectory)
+  /**
+   * @param templateRelPath path to the template file, relative to sourcePathRoot
+   * @param executionSource
+   * @param outputDirectory root to target output path
+   * */
+  public static final Path getOutputFile(
+      final Path templateRelPath,
+      final Path executionSource,
+      final Path outputDirectory)
       throws IOException {
-    final String canoRoot = sources.toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
-    final String abs = vmFile.toAbsolutePath().toString();
+    final String canoRoot = executionSource.toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
+    final String abs = templateRelPath.toAbsolutePath().toString();
     String rel = abs.substring(canoRoot.length() + File.separator.length());
+
     final String relLow = rel.toLowerCase();
     for (final String suf : new String[] { ".vm", ".velo", ".velocity" }) {
       if (relLow.endsWith(suf)) {
@@ -95,24 +109,24 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     return SCM_NAMES.contains(Optional.ofNullable(f).map(File::getName).map(String::toLowerCase).orElse("_FALSE"));
   }
 
-  public static void listVeloFiles(final File f, final Set<File> out, final boolean includeDotFiles,
-      final boolean includeHidden) throws IOException {
-    if (f.isHidden() && !includeHidden)
-      return;
-
-    final String n = f.getName().toLowerCase();
-    if (f.isDirectory()) {
-      if (isSCMDir(f))
-        return;
-      for (final File ff : f.listFiles()) {
-        listVeloFiles(ff.getAbsoluteFile(), out, includeDotFiles, includeHidden);
-      }
-    } else if (f.isFile()) {
-      if (includeDotFiles || !n.startsWith(".")) {
-        out.add(f);
-      }
-    }
-  }
+//  public static void listVeloFiles(final File f, final Set<File> out, final boolean includeDotFiles,
+//      final boolean includeHidden) throws IOException {
+//    if (f.isHidden() && !includeHidden)
+//      return;
+//
+//    final String n = f.getName().toLowerCase();
+//    if (f.isDirectory()) {
+//      if (isSCMDir(f))
+//        return;
+//      for (final File ff : f.listFiles()) {
+//        listVeloFiles(ff.getAbsoluteFile(), out, includeDotFiles, includeHidden);
+//      }
+//    } else if (f.isFile()) {
+//      if (includeDotFiles || !n.startsWith(".")) {
+//        out.add(f);
+//      }
+//    }
+//  }
 
   public static final String prependDot(String s) {
     if (s != null && !s.startsWith(".")) {
@@ -145,7 +159,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
 
   private final Path executionSource;
 
-  private final String sourcePathRoot;
+  private final Path sourcePathRoot;
 
   private final boolean includeDotFiles;
 
@@ -165,25 +179,42 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
 
   private final Optional<Path> prefixPath;
 
-  public AbstractTemplatingEngine(final File src, final String sourcePathRoot,
-      // Incldue dot files
+
+  /**
+   * @param src
+   * @param sourcePathRoot
+   * @param includeDotFiles
+   * @param log
+   * @param sourceExtensions
+   * @param sourceOutputDir
+   * @param project
+   * @param includeHiddenFiles
+   * @param caseSensitive
+   * @param prefixPath
+   */
+  public AbstractTemplatingEngine(
+      //
+      final Path src,
+      //
+      final Path sourcePathRoot,
+      // Include dot files
       final boolean includeDotFiles,
       // Logging
       final Optional<Log> log,
-      // These files are called "sources"
+      // Files with these extensions are called "sources"
       final Optional<Collection<String>> sourceExtensions,
       // Target location
       final Path sourceOutputDir,
       // Maven project for properties
       final MavenProject project,
-      // ALSO includeehidden?
+      // ALSO include hidden?
       final boolean includeHiddenFiles,
       // Match case sensitive
       final boolean caseSensitive,
       // Prepend this to the output path
       final Optional<Path> prefixPath) {
     super();
-    this.executionSource = requireNonNull(src).toPath();
+    this.executionSource = requireNonNull(src);
     this.sourcePathRoot = requireNonNull(sourcePathRoot);
     this.includeDotFiles = includeDotFiles;
     this.log = requireNonNull(log).orElse(new DefaultLog(new ConsoleLogger(0, "name")));
@@ -200,7 +231,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     });
   }
 
-  abstract public T createEngine(String sourcePathRoot) throws Exception;
+  abstract public T createEngine(Path sourcePathRoot) throws Exception;
 
   @Override
   public Optional<String> execute() throws TemplatingEngineException {
@@ -213,7 +244,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         includes,
         //
         excludes,
-        // You can't process directories
+        // You can't process directories, so ignore them at all times
         () -> true,
         // Add the other stuff
         () -> !isIncludeHiddenFiles(),
@@ -221,7 +252,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         () -> !isIncludeDotFiles(),
         //
         () -> isCaseSensitive());
-    final Set<Path> paths = ss.get().scan()
+    final List<Path> paths = ss.get().scan()
         // Fetch the "included" files
         .get(true)
         //
@@ -233,7 +264,11 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         //
         .map(Path::toAbsolutePath)
         //
-        .collect(Collectors.toSet());
+        .map(getSourcePathRoot()::relativize)
+        //
+        .distinct()
+        //
+        .collect(Collectors.toList());
     getLog().debug("Found " + paths.size() + " files in '" + getExecutionSource() + "'...");
     Properties p = new Properties();
 
@@ -255,18 +290,12 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     for (final Path file : paths) {
       try {
         final Path outputDirectory = getOutputDirectoryForFile(file);
-
         final Path outFile = getOutputFile(file, getExecutionSource(), outputDirectory);
-        getLog().debug("Executing template '" + file + "'...");
-
-        String originalFile = file.toAbsolutePath().toString();
-        originalFile = originalFile.substring(getSourcePathRoot().length());
-        if (originalFile.startsWith(File.separator)) {
-          originalFile = originalFile.substring(File.separator.length());
-        }
-
+        String originalFile = getSourcePathRoot().resolve(file).toString();
+        getLog().debug("Executing template '" + originalFile + "'...");
+        getLog().info("Writing " + originalFile + " to " + outFile);
         final T engine = createEngine(getSourcePathRoot());
-        writeTemplate(engine, originalFile, outFile.toFile());
+        writeTemplate(engine, originalFile, outFile);
 
       } catch (final Exception ex) {
         throw new TemplatingEngineException("Failed to execute template '" + file + "'", ex);
@@ -301,7 +330,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
   }
 
   @Override
-  public String getSourcePathRoot() {
+  public Path getSourcePathRoot() {
     return sourcePathRoot;
   }
 
@@ -324,7 +353,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     return this.includeHiddenFiles;
   }
 
-  abstract public void writeTemplate(T engine, String canoTemplate, File outFile) throws Exception;
+  abstract public void writeTemplate(T engine, String canoTemplate, Path outFile) throws Exception;
 
   protected Log getLog() {
     return this.log;

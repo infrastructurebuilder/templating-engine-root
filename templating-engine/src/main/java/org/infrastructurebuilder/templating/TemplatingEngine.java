@@ -68,7 +68,7 @@ public interface TemplatingEngine {
 
   Properties getProperties();
 
-  String getSourcePathRoot();
+  Path getSourcePathRoot();
 
   boolean isCaseSensitive();
 

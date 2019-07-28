@@ -34,7 +34,7 @@ import org.apache.maven.project.MavenProject;
  *
  */
 public interface TemplatingEngineSupplier extends Supplier<TemplatingEngine> {
-  File getExecutionSource();
+  Path getExecutionSource();
 
   String getId();
 
@@ -46,9 +46,9 @@ public interface TemplatingEngineSupplier extends Supplier<TemplatingEngine> {
 
   Properties getProperties();
 
-  String getSourcePathRoot();
+  Path getSourcePathRoot();
 
-  File getSourcesOutputDirectory();
+  Path getSourcesOutputDirectory();
 
   boolean isCaseSensitive();
 
@@ -58,7 +58,7 @@ public interface TemplatingEngineSupplier extends Supplier<TemplatingEngine> {
 
   void setCaseSensitive(boolean caseSensitive);
 
-  void setExecutionSource(File src) throws IOException;
+  void setExecutionSource(Path src) throws IOException;
 
   void setIncludeDotFiles(boolean includeDotFiles);
 
@@ -74,8 +74,8 @@ public interface TemplatingEngineSupplier extends Supplier<TemplatingEngine> {
 
   void setSourceExtensions(Collection<String> sourceExtensions);
 
-  void setSourcePathRoot(File sourcePathRoot) throws IOException;
+  void setSourcePathRoot(Path sourcePathRoot) throws IOException;
 
-  void setSourcesOutputDirectory(File sourcesOutputDirectory);
+  void setSourcesOutputDirectory(Path sourcesOutputDirectory);
 
 }
