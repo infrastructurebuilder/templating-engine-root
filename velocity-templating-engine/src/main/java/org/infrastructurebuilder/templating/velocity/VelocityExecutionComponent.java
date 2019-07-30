@@ -18,21 +18,22 @@ package org.infrastructurebuilder.templating.velocity;
 import static org.infrastructurebuilder.util.IBUtils.readFile;
 import static org.infrastructurebuilder.util.IBUtils.writeString;
 
-import java.io.File;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.infrastructurebuilder.templating.AbstractTemplatingEngine;
+import org.infrastructurebuilder.util.PropertiesSupplier;
 
 public class VelocityExecutionComponent extends AbstractTemplatingEngine<VelocityEngine> {
 
@@ -58,33 +59,33 @@ public class VelocityExecutionComponent extends AbstractTemplatingEngine<Velocit
     return context;
   }
 
-  public VelocityExecutionComponent(final File src, final String sourcePathRoot, final boolean includeDotFiles,
-      final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final File sourceOutputDir,
+  public VelocityExecutionComponent(final Path src, final Path sourcePathRoot, final boolean includeDotFiles,
+      final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final Path sourceOutputDir,
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
-      final Optional<Path> prefixPath) {
-    super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir.toPath(), project,
-        includeHiddenFiles, caseSensitive, prefixPath);
+      final Optional<Path> prefixPath, final Supplier<Properties> properties) {
+    super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir, project,
+        includeHiddenFiles, caseSensitive, prefixPath, properties);
   }
 
   @Override
-  public final VelocityEngine createEngine(final String canoPath) throws Exception {
+  public final VelocityEngine createEngine(final Path sourcePathRoot) throws Exception {
     final VelocityEngine ve = new VelocityEngine();
+    ve.setProperty("resource.default_encoding", "UTF-8");  // FIXME encoding should be a parameter
     ve.setProperty("velocimacro.inline.replace_global", "true");
     ve.setProperty("velocimacro.inline.local_scope", "false");
     ve.setProperty("velocimacro.context.localscope", "false");
     ve.setProperty("runtime.strict_mode.enable", "false");
-    ve.setProperty("resource.loader.file.path", canoPath);
+    ve.setProperty("resource.loader.file.path", sourcePathRoot.toString());
     ve.init();
     return ve;
   }
 
   @Override
-  public void writeTemplate(final VelocityEngine engine, final String canoTemplate, final File outFile)
+  public void writeTemplate(final VelocityEngine engine, final String canoTemplate, final Path outFile)
       throws Exception {
     final VelocityContext _context = createContext(getProject(), getProperties());
     try (StringWriter out = new StringWriter()) {
-
-      final Path p = Paths.get((String) engine.getProperty("resource.loader.file.path"));
+      final Path p = getSourcePathRoot();
       final boolean quoteComments = true;
       if (quoteComments) {
         final String quoted = quoteSharpsInComments(readFile(p.resolve(canoTemplate)));
@@ -94,8 +95,8 @@ public class VelocityExecutionComponent extends AbstractTemplatingEngine<Velocit
         template.merge(_context, out);
       }
 
-      outFile.getParentFile().mkdirs();
-      writeString(outFile.toPath(), unquoteSharpsInComments(out.toString()));
+      Files.createDirectories(outFile.getParent());
+      writeString(outFile, unquoteSharpsInComments(out.toString()));
     }
 
   }

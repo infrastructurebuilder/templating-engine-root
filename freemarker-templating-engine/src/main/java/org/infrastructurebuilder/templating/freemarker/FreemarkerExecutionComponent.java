@@ -15,8 +15,8 @@
  */
 package org.infrastructurebuilder.templating.freemarker;
 
-import java.io.File;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -60,26 +61,26 @@ public class FreemarkerExecutionComponent extends AbstractTemplatingEngine<Confi
     return context;
   }
 
-  public FreemarkerExecutionComponent(final File src, final String sourcePathRoot, final boolean includeDotFiles,
-      final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final File sourceOutputDir,
+  public FreemarkerExecutionComponent(final Path src, final Path sourcePathRoot, final boolean includeDotFiles,
+      final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final Path sourceOutputDir,
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
-      final Optional<Path> prefixPath) {
-    super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir.toPath(), project,
-        includeHiddenFiles, caseSensitive, prefixPath);
+      final Optional<Path> prefixPath, final Supplier<Properties> propsSupplier) {
+    super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir, project,
+        includeHiddenFiles, caseSensitive, prefixPath, propsSupplier);
   }
 
   @Override
-  public final Configuration createEngine(final String canoPath) throws Exception {
+  public final Configuration createEngine(final Path sourcePathRoot) throws Exception {
     final Configuration cfg = new Configuration(Configuration.VERSION_2_3_28);
     // Specify the source where the template files come from. Here I set a
     // plain directory for it, but non-file-system sources are possible too:
 
-    final TemplateLoader tl = new FileTemplateLoader(new File(canoPath));
+    final TemplateLoader tl = new FileTemplateLoader(sourcePathRoot.toRealPath().toFile());
     cfg.setTemplateLoader(tl);
 
     // Set the preferred charset template files are stored in. UTF-8 is
     // a good choice in most applications:
-    cfg.setDefaultEncoding("UTF-8");
+    cfg.setDefaultEncoding("UTF-8"); // FIXME this should be a parameter
 
     // Sets how errors will appear.
     // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
@@ -94,14 +95,14 @@ public class FreemarkerExecutionComponent extends AbstractTemplatingEngine<Confi
   }
 
   @Override
-  public void writeTemplate(final Configuration engine, final String canoTemplate, final File outFile)
+  public void writeTemplate(final Configuration engine, final String canoTemplate, final Path outFile)
       throws Exception {
     final Template template = engine.getTemplate(canoTemplate);
     final Map<String, Object> _context = createContext(getProject(), getProperties());
     try (StringWriter out = new StringWriter()) {
       template.process(_context, out);
-      outFile.getParentFile().mkdirs();
-      IBUtils.writeString(outFile.toPath(), unquoteSharpsInComments(out.toString()));
+      Files.createDirectories(outFile.getParent());
+      IBUtils.writeString(outFile, unquoteSharpsInComments(out.toString()));
     }
 
   }

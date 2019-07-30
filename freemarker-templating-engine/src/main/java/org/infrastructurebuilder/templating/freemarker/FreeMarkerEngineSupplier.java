@@ -37,7 +37,7 @@ public class FreeMarkerEngineSupplier extends AbstractTemplatingEngineSupplier<T
         getExecutionSource(),
         // source root path
         getSourcePathRoot(), isIncludeDotFiles(), Optional.empty(), Optional.empty(), getSourcesOutputDirectory(),
-        getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath());
+        getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath(), () -> getProperties());
   }
 
   @Override

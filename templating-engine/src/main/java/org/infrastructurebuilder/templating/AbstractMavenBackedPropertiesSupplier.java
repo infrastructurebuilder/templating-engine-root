@@ -54,6 +54,7 @@ abstract public class AbstractMavenBackedPropertiesSupplier implements Propertie
     return this;
   }
 
+  @SuppressWarnings("deprecation")
   public AbstractMavenBackedPropertiesSupplier setMavenProject(final MavenProject project) {
     this.project = ofNullable(project).map(MavenProject::new);
     return this;

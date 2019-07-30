@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
@@ -59,14 +60,14 @@ public class AbstractTemplatingEngineSupplierTest {
     engineSupplier = new DummyTemplatingEngineSupplier();
     engineSupplier.setProject(p);
     testClasses = target.resolve("test-classes");
-    engineSupplier.setSourcePathRoot(testClasses.toFile());
-    engineSupplier.setExecutionSource(testClasses.resolve("execFiles").toFile());
+    engineSupplier.setSourcePathRoot(testClasses);
+    engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
     final Path generated = target.resolve("generated-sources");
     Files.createDirectories(generated);
     final Path generatedResources = target.resolve("generated-resources");
     Files.createDirectories(generatedResources);
     //    engineSupplier.setResourcesOutputDirectory(generatedResources.toFile());
-    engineSupplier.setSourcesOutputDirectory(generated.toFile());
+    engineSupplier.setSourcesOutputDirectory(generated);
 
   }
 
@@ -74,13 +75,15 @@ public class AbstractTemplatingEngineSupplierTest {
   public void testExecuteNoLogger() throws TemplatingEngineException, IOException {
     final Path empty = testClasses.resolve("execFiles").resolve("empty");
     Files.createDirectories(empty);
-    engineSupplier.setExecutionSource(empty.toFile());
+    engineSupplier.setExecutionSource(empty);
+    engineSupplier.setProperties(new Properties());
     assertFalse(engineSupplier.get().execute().isPresent()); // False when no files
   }
 
   @Test
   public void testExecuteNoLoggerWithFile() throws Exception {
-    engineSupplier.setExecutionSource(testClasses.resolve("execFiles").toFile());
+    engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
+    engineSupplier.setProperties(new Properties());
     final Optional<String> s = engineSupplier.get().execute();
     assertTrue(s.isPresent()); // False when no files
   }

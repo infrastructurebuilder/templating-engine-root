@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.templating.TemplatingEngineException;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
@@ -68,18 +69,24 @@ public class FreemarkerExecutionComponentTest {
   public void setUp() throws Exception {
     ppp = new Properties();
     ppp.load(getClass().getResourceAsStream("/testfile.properties"));
-
     engineSupplier = new FreeMarkerEngineSupplier();
     engineSupplier.setProject(new MavenProject());
     testClasses = target.resolve("test-classes");
-    engineSupplier.setSourcePathRoot(testClasses.toFile());
-    engineSupplier.setExecutionSource(testClasses.resolve("execFiles").toFile());
+    final Model model = new Model();
+    model.setProperties(ppp);
+    final MavenProject mp = new MavenProject(model);
+    engineSupplier.setProject(mp);
+    engineSupplier.setSourcePathRoot(testClasses);
+    Properties o  = new Properties();
+    o.setProperty("A", "gggggg");
+    engineSupplier.setProperties(o);
+    engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
     final Path generated = target.resolve("generated-sources");
     Files.createDirectories(generated);
     final Path generatedResources = target.resolve("generated-resources");
     Files.createDirectories(generatedResources);
     //    engineSupplier.setResourcesOutputDirectory(generatedResources.toFile());
-    engineSupplier.setSourcesOutputDirectory(generated.toFile());
+    engineSupplier.setSourcesOutputDirectory(generated);
   }
 
   @Test
@@ -92,7 +99,7 @@ public class FreemarkerExecutionComponentTest {
   public void testCreateEngine() throws Exception {
 
     final Configuration e = ((FreemarkerExecutionComponent) engineSupplier.get())
-        .createEngine(Paths.get(".").toAbsolutePath().toString());
+        .createEngine(Paths.get(".").toRealPath());
     assertNotNull(e);
   }
 
@@ -100,13 +107,13 @@ public class FreemarkerExecutionComponentTest {
   public void testExecuteNoLogger() throws TemplatingEngineException, IOException {
     final Path empty = testClasses.resolve("execFiles").resolve("empty");
     Files.createDirectories(empty);
-    engineSupplier.setExecutionSource(empty.toFile());
+    engineSupplier.setExecutionSource(empty);
     assertFalse(engineSupplier.get().execute().isPresent()); // False when no files
   }
 
   @Test
   public void testExecuteNoLoggerWithFile() throws Exception {
-    engineSupplier.setExecutionSource(testClasses.resolve("execFiles").toFile());
+    engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
     assertTrue(engineSupplier.get().execute().isPresent()); // False when no files
   }
 

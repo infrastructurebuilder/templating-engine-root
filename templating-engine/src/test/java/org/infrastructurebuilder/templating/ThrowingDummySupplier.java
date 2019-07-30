@@ -20,7 +20,8 @@ public class ThrowingDummySupplier extends AbstractTemplatingEngineSupplier<Dumm
   @Override
   public TemplatingEngine get() {
     return new DummyTemplatingEngine(null, getSourcePathRoot(), isIncludeDotFiles(), null, null,
-        getSourcesOutputDirectory(), getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath());
+        getSourcesOutputDirectory(), getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath(),
+        () -> getProperties());
   }
 
   @Override

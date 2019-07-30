@@ -20,7 +20,8 @@ public class DummyTemplatingEngineSupplier extends AbstractTemplatingEngineSuppl
   @Override
   public TemplatingEngine get() {
     return new DummyTemplatingEngine(getExecutionSource(), getSourcePathRoot(), isIncludeDotFiles(), null, null,
-        getSourcesOutputDirectory(), getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath());
+        getSourcesOutputDirectory(), getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath(),
+        () -> getProperties());
   }
 
   @Override

@@ -17,7 +17,6 @@ package org.infrastructurebuilder.templating;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -29,15 +28,14 @@ import org.apache.maven.project.MavenProject;
 
 abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngine> implements TemplatingEngineSupplier {
 
-  private File src;
-
-  private String sourcePathRoot;
+  private Path src;
+  private Path sourcePathRoot;
   private boolean includeDotFiles;
   private boolean includeHiddenFiles;
   private boolean caseSensitive;
   private Properties properties;
   private MavenProject project;
-  private File sourcesOutputDirectory;
+  private Path sourcesOutputDirectory;
   private Collection<String> _sourceExtensions;
   private Log log;
 
@@ -47,7 +45,7 @@ abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngin
   abstract public TemplatingEngine get();
 
   @Override
-  public File getExecutionSource() {
+  public Path getExecutionSource() {
     return this.src;
   }
 
@@ -76,12 +74,12 @@ abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngin
   }
 
   @Override
-  public String getSourcePathRoot() {
+  public Path getSourcePathRoot() {
     return sourcePathRoot;
   }
 
   @Override
-  public File getSourcesOutputDirectory() {
+  public Path getSourcesOutputDirectory() {
     return sourcesOutputDirectory;
   }
 
@@ -106,8 +104,8 @@ abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngin
   }
 
   @Override
-  public void setExecutionSource(final File src) throws IOException {
-    this.src = src.getCanonicalFile();
+  public void setExecutionSource(final Path src) throws IOException {
+    this.src = src.toRealPath();
   }
 
   @Override
@@ -146,12 +144,12 @@ abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngin
   }
 
   @Override
-  public void setSourcePathRoot(final File sourcePathRoot) throws IOException {
-    this.sourcePathRoot = sourcePathRoot.getCanonicalPath();
+  public void setSourcePathRoot(final Path sourcePathRoot) throws IOException {
+    this.sourcePathRoot = sourcePathRoot.toAbsolutePath().toRealPath();
   }
 
   @Override
-  public void setSourcesOutputDirectory(final File sourcesOutputDirectory) {
+  public void setSourcesOutputDirectory(final Path sourcesOutputDirectory) {
     this.sourcesOutputDirectory = sourcesOutputDirectory;
   }
 }
