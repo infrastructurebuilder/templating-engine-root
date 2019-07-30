@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -63,9 +64,9 @@ public class FreemarkerExecutionComponent extends AbstractTemplatingEngine<Confi
   public FreemarkerExecutionComponent(final Path src, final Path sourcePathRoot, final boolean includeDotFiles,
       final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final Path sourceOutputDir,
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
-      final Optional<Path> prefixPath) {
+      final Optional<Path> prefixPath, final Supplier<Properties> propsSupplier) {
     super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir, project,
-        includeHiddenFiles, caseSensitive, prefixPath);
+        includeHiddenFiles, caseSensitive, prefixPath, propsSupplier);
   }
 
   @Override
@@ -79,7 +80,7 @@ public class FreemarkerExecutionComponent extends AbstractTemplatingEngine<Confi
 
     // Set the preferred charset template files are stored in. UTF-8 is
     // a good choice in most applications:
-    cfg.setDefaultEncoding("UTF-8");
+    cfg.setDefaultEncoding("UTF-8"); // FIXME this should be a parameter
 
     // Sets how errors will appear.
     // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.

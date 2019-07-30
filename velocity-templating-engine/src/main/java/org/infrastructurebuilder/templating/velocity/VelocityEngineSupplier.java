@@ -34,7 +34,7 @@ public class VelocityEngineSupplier extends AbstractTemplatingEngineSupplier<Vel
   public TemplatingEngine get() {
     return new VelocityExecutionComponent(getExecutionSource(), getSourcePathRoot(), isIncludeDotFiles(),
         Optional.empty(), Optional.empty(), getSourcesOutputDirectory(), getProject().get(), isIncludeHiddenFiles(),
-        isCaseSensitive(), getPrefixPath());
+        isCaseSensitive(), getPrefixPath(), () -> getProperties());
   }
 
   @Override

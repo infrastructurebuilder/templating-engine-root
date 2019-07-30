@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -30,7 +31,7 @@ public class DummyPassThru extends AbstractTemplatingEngine<DummyPassThru> {
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
       final Optional<Path> prefixPath) {
     super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir.toPath(), project,
-        includeHiddenFiles, caseSensitive, prefixPath);
+        includeHiddenFiles, caseSensitive, prefixPath, () -> new Properties());
   }
 
   @Override

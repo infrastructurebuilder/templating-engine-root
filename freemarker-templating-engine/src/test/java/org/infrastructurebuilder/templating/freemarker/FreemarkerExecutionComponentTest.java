@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.templating.TemplatingEngineException;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
@@ -71,7 +72,14 @@ public class FreemarkerExecutionComponentTest {
     engineSupplier = new FreeMarkerEngineSupplier();
     engineSupplier.setProject(new MavenProject());
     testClasses = target.resolve("test-classes");
+    final Model model = new Model();
+    model.setProperties(ppp);
+    final MavenProject mp = new MavenProject(model);
+    engineSupplier.setProject(mp);
     engineSupplier.setSourcePathRoot(testClasses);
+    Properties o  = new Properties();
+    o.setProperty("A", "gggggg");
+    engineSupplier.setProperties(o);
     engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
     final Path generated = target.resolve("generated-sources");
     Files.createDirectories(generated);

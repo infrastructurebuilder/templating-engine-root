@@ -21,7 +21,6 @@ import static org.infrastructurebuilder.templating.TemplatingEngine.mergePropert
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,9 +28,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -86,16 +85,11 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
    * @param executionSource
    * @param outputDirectory root to target output path
    * */
-  public static final Path getOutputFile(
-      final Path templateRelPath,
-      final Path executionSource,
-      final Path outputDirectory)
-      throws IOException {
-    final String canoRoot = executionSource.toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
-    final String abs = templateRelPath.toAbsolutePath().toString();
-    String rel = abs.substring(canoRoot.length() + File.separator.length());
+  public static final Path getOutputFile(final Path templateRelPath, final Path executionSource,
+      final Path outputDirectory) throws IOException {
 
-    final String relLow = rel.toLowerCase();
+    String rel = templateRelPath.toString();
+    String relLow = rel.toLowerCase();
     for (final String suf : new String[] { ".vm", ".velo", ".velocity" }) {
       if (relLow.endsWith(suf)) {
         rel = rel.substring(0, rel.length() - suf.length());
@@ -109,24 +103,24 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     return SCM_NAMES.contains(Optional.ofNullable(f).map(File::getName).map(String::toLowerCase).orElse("_FALSE"));
   }
 
-//  public static void listVeloFiles(final File f, final Set<File> out, final boolean includeDotFiles,
-//      final boolean includeHidden) throws IOException {
-//    if (f.isHidden() && !includeHidden)
-//      return;
-//
-//    final String n = f.getName().toLowerCase();
-//    if (f.isDirectory()) {
-//      if (isSCMDir(f))
-//        return;
-//      for (final File ff : f.listFiles()) {
-//        listVeloFiles(ff.getAbsoluteFile(), out, includeDotFiles, includeHidden);
-//      }
-//    } else if (f.isFile()) {
-//      if (includeDotFiles || !n.startsWith(".")) {
-//        out.add(f);
-//      }
-//    }
-//  }
+  //  public static void listVeloFiles(final File f, final Set<File> out, final boolean includeDotFiles,
+  //      final boolean includeHidden) throws IOException {
+  //    if (f.isHidden() && !includeHidden)
+  //      return;
+  //
+  //    final String n = f.getName().toLowerCase();
+  //    if (f.isDirectory()) {
+  //      if (isSCMDir(f))
+  //        return;
+  //      for (final File ff : f.listFiles()) {
+  //        listVeloFiles(ff.getAbsoluteFile(), out, includeDotFiles, includeHidden);
+  //      }
+  //    } else if (f.isFile()) {
+  //      if (includeDotFiles || !n.startsWith(".")) {
+  //        out.add(f);
+  //      }
+  //    }
+  //  }
 
   public static final String prependDot(String s) {
     if (s != null && !s.startsWith(".")) {
@@ -171,14 +165,13 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
 
   private final MavenProject project;
 
-  private final Properties properties = new Properties();
+  private final Properties properties;
 
   private final boolean includeHiddenFiles;
 
   private final boolean caseSensitive;
 
   private final Optional<Path> prefixPath;
-
 
   /**
    * @param src
@@ -212,7 +205,9 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
       // Match case sensitive
       final boolean caseSensitive,
       // Prepend this to the output path
-      final Optional<Path> prefixPath) {
+      final Optional<Path> prefixPath,
+      // "the" properties
+      final Supplier<Properties> propertiesSupplier) {
     super();
     this.executionSource = requireNonNull(src);
     this.sourcePathRoot = requireNonNull(sourcePathRoot);
@@ -225,12 +220,14 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     this.includeHiddenFiles = includeHiddenFiles;
     this.caseSensitive = caseSensitive;
     this.prefixPath = requireNonNull(prefixPath);
+    this.properties = requireNonNull(propertiesSupplier).get();
     this.prefixPath.ifPresent(pp -> {
       if (pp.isAbsolute())
         throw new TemplatingEngineException("Prefix path " + pp + " is not relative");
     });
   }
 
+  // FIXME make encoding a string parameter?
   abstract public T createEngine(Path sourcePathRoot) throws Exception;
 
   @Override
@@ -270,12 +267,11 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         //
         .collect(Collectors.toList());
     getLog().debug("Found " + paths.size() + " files in '" + getExecutionSource() + "'...");
-    Properties p = new Properties();
+    Properties p = getProperties();
 
     if (getProject().isPresent()) {
-      p = getProject().get().getProperties();
-    } else {
-      p = new Properties();
+      Properties pprops = getProject().get().getProperties();
+      p.putAll(pprops);
     }
     p.setProperty("LB", "${");
     p.setProperty("RB", "}");
@@ -295,7 +291,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         getLog().debug("Executing template '" + originalFile + "'...");
         getLog().info("Writing " + originalFile + " to " + outFile);
         final T engine = createEngine(getSourcePathRoot());
-        writeTemplate(engine, originalFile, outFile);
+        writeTemplate(engine, file.toString(), outFile);
 
       } catch (final Exception ex) {
         throw new TemplatingEngineException("Failed to execute template '" + file + "'", ex);

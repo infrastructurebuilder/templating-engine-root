@@ -64,7 +64,6 @@ public class VelocityExecutionComponentTest {
 
   private Path testClasses;
 
-  private MavenProject p;
 
   private Properties ppp;
 
@@ -78,6 +77,7 @@ public class VelocityExecutionComponentTest {
     model.setProperties(ppp);
     final MavenProject mp = new MavenProject(model);
     engineSupplier.setProject(mp);
+    engineSupplier.setProperties(new Properties());
     testClasses = target.resolve("test-classes");
     engineSupplier.setSourcePathRoot(testClasses);
     engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
@@ -107,6 +107,7 @@ public class VelocityExecutionComponentTest {
     final Path empty = testClasses.resolve("execFiles").resolve("empty");
     Files.createDirectories(empty);
     engineSupplier.setExecutionSource(empty);
+
     assertFalse(engineSupplier.get().execute().isPresent()); // False when no files
   }
 

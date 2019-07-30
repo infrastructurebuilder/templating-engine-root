@@ -35,7 +35,6 @@ public class AbstractMavenBackedPropertiesSupplierTest {
   private Properties props;
   private Model mm;
   private Properties current;
-  private int mphash;
   private String x;
 
   @Before
@@ -49,7 +48,6 @@ public class AbstractMavenBackedPropertiesSupplierTest {
     mm.setVersion("1.0");
     mm.setProperties(props);
     mp = new MavenProject(mm);
-    mphash = mp.hashCode();
     current = new Properties();
     current.setProperty(x, "B");
     amp = new DummyAbstractMavenBackedPropertiesSupplier();

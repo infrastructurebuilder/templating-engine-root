@@ -18,22 +18,22 @@ package org.infrastructurebuilder.templating.velocity;
 import static org.infrastructurebuilder.util.IBUtils.readFile;
 import static org.infrastructurebuilder.util.IBUtils.writeString;
 
-import java.io.File;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.infrastructurebuilder.templating.AbstractTemplatingEngine;
+import org.infrastructurebuilder.util.PropertiesSupplier;
 
 public class VelocityExecutionComponent extends AbstractTemplatingEngine<VelocityEngine> {
 
@@ -62,14 +62,15 @@ public class VelocityExecutionComponent extends AbstractTemplatingEngine<Velocit
   public VelocityExecutionComponent(final Path src, final Path sourcePathRoot, final boolean includeDotFiles,
       final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final Path sourceOutputDir,
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
-      final Optional<Path> prefixPath) {
+      final Optional<Path> prefixPath, final Supplier<Properties> properties) {
     super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir, project,
-        includeHiddenFiles, caseSensitive, prefixPath);
+        includeHiddenFiles, caseSensitive, prefixPath, properties);
   }
 
   @Override
   public final VelocityEngine createEngine(final Path sourcePathRoot) throws Exception {
     final VelocityEngine ve = new VelocityEngine();
+    ve.setProperty("resource.default_encoding", "UTF-8");  // FIXME encoding should be a parameter
     ve.setProperty("velocimacro.inline.replace_global", "true");
     ve.setProperty("velocimacro.inline.local_scope", "false");
     ve.setProperty("velocimacro.context.localscope", "false");

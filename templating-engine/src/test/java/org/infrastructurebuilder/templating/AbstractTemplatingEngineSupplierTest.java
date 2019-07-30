@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
@@ -75,12 +76,14 @@ public class AbstractTemplatingEngineSupplierTest {
     final Path empty = testClasses.resolve("execFiles").resolve("empty");
     Files.createDirectories(empty);
     engineSupplier.setExecutionSource(empty);
+    engineSupplier.setProperties(new Properties());
     assertFalse(engineSupplier.get().execute().isPresent()); // False when no files
   }
 
   @Test
   public void testExecuteNoLoggerWithFile() throws Exception {
     engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
+    engineSupplier.setProperties(new Properties());
     final Optional<String> s = engineSupplier.get().execute();
     assertTrue(s.isPresent()); // False when no files
   }
