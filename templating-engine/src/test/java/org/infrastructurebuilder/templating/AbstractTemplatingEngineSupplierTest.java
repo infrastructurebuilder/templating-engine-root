@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -76,14 +77,14 @@ public class AbstractTemplatingEngineSupplierTest {
     final Path empty = testClasses.resolve("execFiles").resolve("empty");
     Files.createDirectories(empty);
     engineSupplier.setExecutionSource(empty);
-    engineSupplier.setProperties(new Properties());
+    engineSupplier.setProperties(new HashMap<>());
     assertFalse(engineSupplier.get().execute().isPresent()); // False when no files
   }
 
   @Test
   public void testExecuteNoLoggerWithFile() throws Exception {
     engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
-    engineSupplier.setProperties(new Properties());
+    engineSupplier.setProperties(new HashMap<>());
     final Optional<String> s = engineSupplier.get().execute();
     assertTrue(s.isPresent()); // False when no files
   }

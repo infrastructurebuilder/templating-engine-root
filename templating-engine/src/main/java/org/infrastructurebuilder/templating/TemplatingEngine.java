@@ -18,7 +18,9 @@ package org.infrastructurebuilder.templating;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -27,20 +29,18 @@ import org.apache.maven.project.MavenProject;
 public interface TemplatingEngine {
   public static final String EXECUTION_IDENTIFIER = "execution_identifier";
 
-  public static List<String> getPropertyNames(final Properties base) {
+  public static List<String> getPropertyNames(final Map<String,Object> base) {
     final List<String> l = new ArrayList<>();
-    final Enumeration<?> n = base.propertyNames();
-    while (n.hasMoreElements()) {
-      l.add((String) n.nextElement());
-    }
+    base.keySet().stream().forEach(l::add);
     return l;
   }
 
-  public static Properties mergeProperties(final Properties... props) {
-    final Properties p = new Properties();
-    for (final Properties a : props) {
-      for (final String n : getPropertyNames(a)) {
-        p.setProperty(n, a.getProperty(n));
+  @SafeVarargs
+  public static Map<String,Object> mergeProperties(final Map<String,Object>... props) {
+    final Map<String,Object> p = new HashMap<>();
+    for (final Map<String,Object> a : props) {
+      for (final String n : a.keySet()) {
+        p.put(n, a.get(n));
       }
     }
     return p;
@@ -66,7 +66,11 @@ public interface TemplatingEngine {
 
   Optional<MavenProject> getProject();
 
-  Properties getProperties();
+  /**
+   * Map<String,Object> and likely to be turned into String, Object.toString() map later
+   * @return
+   */
+  Map<String,Object> getProperties();
 
   Path getSourcePathRoot();
 

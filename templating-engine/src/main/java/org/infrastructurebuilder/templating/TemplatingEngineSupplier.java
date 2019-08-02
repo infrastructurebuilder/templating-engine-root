@@ -18,6 +18,7 @@ package org.infrastructurebuilder.templating;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
@@ -43,7 +44,7 @@ public interface TemplatingEngineSupplier extends Supplier<TemplatingEngine> {
 
   Optional<MavenProject> getProject();
 
-  Properties getProperties();
+  Map<String,Object> getProperties();
 
   Path getSourcePathRoot();
 
@@ -69,7 +70,7 @@ public interface TemplatingEngineSupplier extends Supplier<TemplatingEngine> {
 
   void setProject(MavenProject project);
 
-  void setProperties(Properties properties);
+  void setProperties(Map<String,Object> properties);
 
   void setSourceExtensions(Collection<String> sourceExtensions);
 

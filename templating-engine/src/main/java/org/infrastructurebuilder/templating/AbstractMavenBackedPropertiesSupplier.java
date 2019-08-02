@@ -18,8 +18,10 @@ package org.infrastructurebuilder.templating;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.util.PropertiesSupplier;
@@ -36,12 +38,12 @@ import org.infrastructurebuilder.util.PropertiesSupplier;
  * @author mykel.alvis
  *
  */
-abstract public class AbstractMavenBackedPropertiesSupplier implements PropertiesSupplier {
+abstract public class AbstractMavenBackedPropertiesSupplier implements MSOSupplier {
 
   private Optional<MavenProject> project;
-  private final Properties currentProperties = new Properties();
+  private final Map<String,Object> currentProperties = new HashMap<>();
 
-  public final Properties getCurrentProperties() {
+  public final Map<String, Object> getCurrentProperties() {
     return currentProperties;
   }
 
@@ -49,7 +51,7 @@ abstract public class AbstractMavenBackedPropertiesSupplier implements Propertie
     return project;
   }
 
-  public final AbstractMavenBackedPropertiesSupplier setCurrentPropertiesValues(final Properties current) {
+  public final AbstractMavenBackedPropertiesSupplier setCurrentPropertiesValues(final Map<String,Object> current) {
     currentProperties.putAll(requireNonNull(current));
     return this;
   }

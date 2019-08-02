@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -33,7 +34,7 @@ abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngin
   private boolean includeDotFiles;
   private boolean includeHiddenFiles;
   private boolean caseSensitive;
-  private Properties properties;
+  private Map<String, Object> properties;
   private MavenProject project;
   private Path sourcesOutputDirectory;
   private Collection<String> _sourceExtensions;
@@ -65,7 +66,7 @@ abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngin
   }
 
   @Override
-  public Properties getProperties() {
+  public Map<String, Object> getProperties() {
     return properties;
   }
 
@@ -134,7 +135,7 @@ abstract public class AbstractTemplatingEngineSupplier<T extends TemplatingEngin
   }
 
   @Override
-  public void setProperties(final Properties properties) {
+  public void setProperties(final Map<String,Object> properties) {
     this.properties = properties;
   }
 

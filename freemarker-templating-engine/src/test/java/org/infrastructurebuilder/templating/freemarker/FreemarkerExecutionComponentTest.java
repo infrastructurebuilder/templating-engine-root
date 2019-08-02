@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -63,22 +65,24 @@ public class FreemarkerExecutionComponentTest {
 
   private Path testClasses;
 
-  private Properties ppp;
+  private Map<String,Object> ppp;
 
   @Before
   public void setUp() throws Exception {
-    ppp = new Properties();
-    ppp.load(getClass().getResourceAsStream("/testfile.properties"));
+    ppp = new HashMap<>();
+    Properties kv = new Properties();
+    kv.load(getClass().getResourceAsStream("/testfile.properties"));
+    kv.stringPropertyNames().forEach(key -> ppp.put(key, kv.getProperty(key)));
     engineSupplier = new FreeMarkerEngineSupplier();
     engineSupplier.setProject(new MavenProject());
     testClasses = target.resolve("test-classes");
     final Model model = new Model();
-    model.setProperties(ppp);
+    model.setProperties(kv);
     final MavenProject mp = new MavenProject(model);
     engineSupplier.setProject(mp);
     engineSupplier.setSourcePathRoot(testClasses);
-    Properties o  = new Properties();
-    o.setProperty("A", "gggggg");
+    Map<String,Object >o  = new HashMap<>();
+    o.put("A", "gggggg");
     engineSupplier.setProperties(o);
     engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
     final Path generated = target.resolve("generated-sources");
@@ -91,7 +95,7 @@ public class FreemarkerExecutionComponentTest {
 
   @Test
   public void testCreateContextNoProject() {
-    final Properties m = ppp;
+    final Map<String,Object> m = ppp;
     assertNotNull(FreemarkerExecutionComponent.createContext(Optional.empty(), m));
   }
 

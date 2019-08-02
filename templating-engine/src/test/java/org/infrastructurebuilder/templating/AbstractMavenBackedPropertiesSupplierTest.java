@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -34,7 +36,7 @@ public class AbstractMavenBackedPropertiesSupplierTest {
   private MavenProject mp;
   private Properties props;
   private Model mm;
-  private Properties current;
+  private Map<String,Object> current;
   private String x;
 
   @Before
@@ -48,8 +50,8 @@ public class AbstractMavenBackedPropertiesSupplierTest {
     mm.setVersion("1.0");
     mm.setProperties(props);
     mp = new MavenProject(mm);
-    current = new Properties();
-    current.setProperty(x, "B");
+    current = new HashMap<>();
+    current.put(x, "B");
     amp = new DummyAbstractMavenBackedPropertiesSupplier();
     amp.setMavenProject(mp);
     amp.setCurrentPropertiesValues(current);
@@ -57,7 +59,7 @@ public class AbstractMavenBackedPropertiesSupplierTest {
 
   @Test
   public void testGetCurrentProperties() {
-    final Properties p = amp.getCurrentProperties();
+    Map<String, Object>  p = amp.getCurrentProperties();
     assertTrue(p.containsKey(x));
   }
 
