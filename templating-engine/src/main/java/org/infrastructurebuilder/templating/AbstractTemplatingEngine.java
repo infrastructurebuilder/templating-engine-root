@@ -25,7 +25,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -66,15 +68,14 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     return false;
   }
 
-  public static String getDisplayedContext(final Optional<MavenProject> project, final Properties properties) {
-    final Properties p = new Properties();
-    // FIXME This isn't quite right
-    if (project.isPresent()) {
-      p.putAll(project.get().getProperties());
-    }
-    final Properties gp = mergeProperties(p, properties);
-    final TreeMap<String, String> m = new TreeMap<>();
-    getPropertyNames(gp).stream().sorted().forEach(n -> m.put(n, gp.getProperty(n)));
+  public static String getDisplayedContext(final Optional<MavenProject> project, final Map<String, Object> properties) {
+    final Map<String, Object> p = new HashMap<>();
+    project.map(MavenProject::getProperties).ifPresent(pproj -> {
+      pproj.stringPropertyNames().forEach(key -> p.put(key, pproj.getProperty(key)));
+    });
+    final Map<String, Object> gp = mergeProperties(p, properties);
+    final TreeMap<String, Object> m = new TreeMap<>();
+    getPropertyNames(gp).stream().sorted().forEach(n -> m.put(n, gp.get(n)));
 
     return String.join("\n", m.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
         .collect(Collectors.toList()).toArray(new String[0]));
@@ -165,7 +166,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
 
   private final MavenProject project;
 
-  private final Properties properties;
+  private final Map<String, Object> properties;
 
   private final boolean includeHiddenFiles;
 
@@ -207,7 +208,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
       // Prepend this to the output path
       final Optional<Path> prefixPath,
       // "the" properties
-      final Supplier<Properties> propertiesSupplier) {
+      final Supplier<Map<String, Object>> propertiesSupplier) {
     super();
     this.executionSource = requireNonNull(src);
     this.sourcePathRoot = requireNonNull(sourcePathRoot);
@@ -267,14 +268,14 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         //
         .collect(Collectors.toList());
     getLog().debug("Found " + paths.size() + " files in '" + getExecutionSource() + "'...");
-    Properties p = getProperties();
+    Map<String, Object> p = getProperties();
 
     if (getProject().isPresent()) {
       Properties pprops = getProject().get().getProperties();
-      p.putAll(pprops);
+      pprops.entrySet().stream().forEach(e -> p.put(e.getKey().toString(), e.getValue()));
     }
-    p.setProperty("LB", "${");
-    p.setProperty("RB", "}");
+    p.put("LB", "${");
+    p.put("RB", "}");
     getLog().debug("Got Maven getProperties() : " + p);
     getLog().debug("Got getProperties() : " + getProperties());
 
@@ -317,7 +318,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
   }
 
   @Override
-  public Properties getProperties() {
+  public Map<String, Object> getProperties() {
     return properties;
   }
 

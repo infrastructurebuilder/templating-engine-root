@@ -23,8 +23,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.monitor.logging.DefaultLog;
@@ -64,20 +68,22 @@ public class VelocityExecutionComponentTest {
 
   private Path testClasses;
 
-
-  private Properties ppp;
+  private Map<String, Object> ppp;
 
   @Before
   public void setUp() throws Exception {
-    ppp = new Properties();
-    ppp.load(getClass().getResourceAsStream("/testfile.properties"));
+    ppp = new HashMap<>();
+    Properties kv = new Properties();
+    kv.load(getClass().getResourceAsStream("/testfile.properties"));
+    ppp.putAll(
+        kv.stringPropertyNames().stream().collect(Collectors.toMap(Function.identity(), v -> kv.getProperty(v))));
     engineSupplier = new VelocityEngineSupplier();
     engineSupplier.setLog(new DefaultLog(new ConsoleLogger(0, null)));
     final Model model = new Model();
-    model.setProperties(ppp);
+    model.setProperties(kv);
     final MavenProject mp = new MavenProject(model);
     engineSupplier.setProject(mp);
-    engineSupplier.setProperties(new Properties());
+    engineSupplier.setProperties(new HashMap<>());
     testClasses = target.resolve("test-classes");
     engineSupplier.setSourcePathRoot(testClasses);
     engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
@@ -91,7 +97,7 @@ public class VelocityExecutionComponentTest {
 
   @Test
   public void testCreateContextNoProject() {
-    final Properties m = ppp;
+    final Map<String, Object> m = ppp;
     assertNotNull(VelocityExecutionComponent.createContext(Optional.empty(), m));
   }
 

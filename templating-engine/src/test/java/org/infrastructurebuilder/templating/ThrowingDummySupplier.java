@@ -15,13 +15,15 @@
  */
 package org.infrastructurebuilder.templating;
 
+import java.util.HashMap;
+
 public class ThrowingDummySupplier extends AbstractTemplatingEngineSupplier<DummyPassThru> {
 
   @Override
   public TemplatingEngine get() {
     return new DummyTemplatingEngine(null, getSourcePathRoot(), isIncludeDotFiles(), null, null,
         getSourcesOutputDirectory(), getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath(),
-        () -> getProperties());
+        () -> new HashMap<>());
   }
 
   @Override

@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.templating;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -28,11 +29,11 @@ public class DummyAbstractMavenBackedPropertiesSupplier extends AbstractMavenBac
   private Optional<MavenProject> mp;
 
   @Override
-  public Properties get() {
+  public Map<String, Object> get() {
     mp = getProject();
-    final Properties cp = getCurrentProperties();
-    cp.setProperty(TYPE, DUMMY);
-    cp.setProperty(MAVEN_PROJECT, mp.toString());
+    final Map<String, Object> cp = getCurrentProperties();
+    cp.put(TYPE, DUMMY);
+    cp.put(MAVEN_PROJECT, mp);
     return cp;
   }
 

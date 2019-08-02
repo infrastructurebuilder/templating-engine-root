@@ -15,20 +15,9 @@
  */
 package org.infrastructurebuilder.templating;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
-public class DummyTemplatingEngineSupplier extends AbstractTemplatingEngineSupplier<DummyPassThru> {
-
-  @Override
-  public TemplatingEngine get() {
-    return new DummyTemplatingEngine(getExecutionSource(), getSourcePathRoot(), isIncludeDotFiles(), null, null,
-        getSourcesOutputDirectory(), getProject().get(), isIncludeHiddenFiles(), isCaseSensitive(), getPrefixPath(),
-        () -> new HashMap<>());
-  }
-
-  @Override
-  public String getId() {
-    return "dummy";
-  }
+public interface MSOSupplier extends Supplier<Map<String,Object>> {
 
 }

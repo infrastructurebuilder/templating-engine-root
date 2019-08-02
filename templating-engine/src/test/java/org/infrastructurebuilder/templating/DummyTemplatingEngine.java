@@ -18,6 +18,7 @@ package org.infrastructurebuilder.templating;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -32,7 +33,7 @@ public class DummyTemplatingEngine extends AbstractTemplatingEngine<DummyPassThr
   public DummyTemplatingEngine(final Path src, final Path sourcePathRoot, final boolean includeDotFiles, final Log log,
       final Collection<String> sourceExtensions, final Path sourceOutputDir, final MavenProject project,
       final boolean includeHiddenFiles, final boolean caseSensitive, final Optional<Path> prefixPath,
-      final Supplier<Properties> ps) {
+      final Supplier<Map<String,Object>> ps) {
     super(src, sourcePathRoot, includeDotFiles, Optional.ofNullable(log), Optional.ofNullable(sourceExtensions),
         sourceOutputDir, project, includeHiddenFiles, caseSensitive, prefixPath, ps);
   }

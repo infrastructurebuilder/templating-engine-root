@@ -18,6 +18,7 @@ package org.infrastructurebuilder.templating;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -31,7 +32,7 @@ public class DummyPassThru extends AbstractTemplatingEngine<DummyPassThru> {
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
       final Optional<Path> prefixPath) {
     super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir.toPath(), project,
-        includeHiddenFiles, caseSensitive, prefixPath, () -> new Properties());
+        includeHiddenFiles, caseSensitive, prefixPath, () -> new HashMap<String,Object>());
   }
 
   @Override

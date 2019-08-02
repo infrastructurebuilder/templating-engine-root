@@ -19,7 +19,6 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -39,7 +38,7 @@ import freemarker.template.TemplateExceptionHandler;
 
 public class FreemarkerExecutionComponent extends AbstractTemplatingEngine<Configuration> {
 
-  static final Map<String, Object> createContext(final Optional<MavenProject> project, final Properties properties) {
+  static final Map<String, Object> createContext(final Optional<MavenProject> project, final Map<String,Object> properties) {
     final Map<String, Object> context = new HashMap<>();
     context.put("project", project.orElse(null));
 
@@ -51,12 +50,7 @@ public class FreemarkerExecutionComponent extends AbstractTemplatingEngine<Confi
     }
 
     if (properties != null) {
-      final Enumeration<?> enumeration = properties.propertyNames();
-      while (enumeration.hasMoreElements()) {
-        final String propName = (String) enumeration.nextElement();
-        final String propValue = properties.getProperty(propName);
-        context.put(propName, propValue);
-      }
+      properties.entrySet().forEach(e -> context.put(e.getKey(), e.getValue()));
     }
     return context;
   }
@@ -64,7 +58,7 @@ public class FreemarkerExecutionComponent extends AbstractTemplatingEngine<Confi
   public FreemarkerExecutionComponent(final Path src, final Path sourcePathRoot, final boolean includeDotFiles,
       final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final Path sourceOutputDir,
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
-      final Optional<Path> prefixPath, final Supplier<Properties> propsSupplier) {
+      final Optional<Path> prefixPath, final Supplier<Map<String,Object>> propsSupplier) {
     super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir, project,
         includeHiddenFiles, caseSensitive, prefixPath, propsSupplier);
   }

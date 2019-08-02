@@ -37,7 +37,8 @@ import org.infrastructurebuilder.util.PropertiesSupplier;
 
 public class VelocityExecutionComponent extends AbstractTemplatingEngine<VelocityEngine> {
 
-  static final VelocityContext createContext(final Optional<MavenProject> project, final Properties properties) {
+  static final VelocityContext createContext(final Optional<MavenProject> project,
+      final Map<String, Object> properties) {
     final VelocityContext context = new VelocityContext();
     context.put("project", project.orElse(null));
 
@@ -49,12 +50,7 @@ public class VelocityExecutionComponent extends AbstractTemplatingEngine<Velocit
     }
 
     if (properties != null) {
-      final Enumeration<?> enumeration = properties.propertyNames();
-      while (enumeration.hasMoreElements()) {
-        final String propName = (String) enumeration.nextElement();
-        final String propValue = properties.getProperty(propName);
-        context.put(propName, propValue);
-      }
+      properties.entrySet().forEach(e -> context.put(e.getKey(), e.getValue()));
     }
     return context;
   }
@@ -62,15 +58,15 @@ public class VelocityExecutionComponent extends AbstractTemplatingEngine<Velocit
   public VelocityExecutionComponent(final Path src, final Path sourcePathRoot, final boolean includeDotFiles,
       final Optional<Log> log, final Optional<Collection<String>> sourceExtensions, final Path sourceOutputDir,
       final MavenProject project, final boolean includeHiddenFiles, final boolean caseSensitive,
-      final Optional<Path> prefixPath, final Supplier<Properties> properties) {
-    super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir, project,
-        includeHiddenFiles, caseSensitive, prefixPath, properties);
+      final Optional<Path> prefixPath, final Supplier<Map<String, Object>> properties) {
+    super(src, sourcePathRoot, includeDotFiles, log, sourceExtensions, sourceOutputDir, project, includeHiddenFiles,
+        caseSensitive, prefixPath, properties);
   }
 
   @Override
   public final VelocityEngine createEngine(final Path sourcePathRoot) throws Exception {
     final VelocityEngine ve = new VelocityEngine();
-    ve.setProperty("resource.default_encoding", "UTF-8");  // FIXME encoding should be a parameter
+    ve.setProperty("resource.default_encoding", "UTF-8"); // FIXME encoding should be a parameter
     ve.setProperty("velocimacro.inline.replace_global", "true");
     ve.setProperty("velocimacro.inline.local_scope", "false");
     ve.setProperty("velocimacro.context.localscope", "false");
