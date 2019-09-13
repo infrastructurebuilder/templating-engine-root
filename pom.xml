@@ -16,12 +16,14 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>8</version>
+    <version>10</version>
   </parent>
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>templating-engine-root</artifactId>
@@ -47,12 +49,12 @@
         <artifactId>maven-import-bom</artifactId>
         <type>pom</type>
         <scope>import</scope>
-        <version>${maven.version}.2</version>
+        <version>${maven.version}.0</version>
       </dependency>
       <dependency>
         <groupId>org.infrastructurebuilder.util</groupId>
         <artifactId>ibcore-bom</artifactId>
-        <version>0.11.0.0</version>
+        <version>0.11.1.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
