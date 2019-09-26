@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.Properties;
 
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
