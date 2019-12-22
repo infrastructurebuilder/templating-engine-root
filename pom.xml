@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>13-SNAPSHOT</version>
+    <version>26</version>
   </parent>
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>templating-engine-root</artifactId>
@@ -52,7 +52,7 @@
       <dependency>
         <groupId>org.infrastructurebuilder.util</groupId>
         <artifactId>ibcore-bom</artifactId>
-        <version>0.11.2.0-SNAPSHOT</version>
+        <version>0.15.0.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
