@@ -21,11 +21,11 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>13-SNAPSHOT</version>
+    <version>41</version>
   </parent>
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>templating-engine-root</artifactId>
-  <version>0.9.4-SNAPSHOT</version>
+  <version>0.9.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <scm>
@@ -47,12 +47,12 @@
         <artifactId>maven-import-bom</artifactId>
         <type>pom</type>
         <scope>import</scope>
-        <version>${maven.version}.0</version>
+        <version>${maven.version}.3</version>
       </dependency>
       <dependency>
         <groupId>org.infrastructurebuilder.util</groupId>
         <artifactId>ibcore-bom</artifactId>
-        <version>0.11.2.0-SNAPSHOT</version>
+        <version>0.17.2.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
