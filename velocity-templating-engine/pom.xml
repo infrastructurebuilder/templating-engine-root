@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.infrastructurebuilder.templating</groupId>
     <artifactId>templating-engine-root</artifactId>
-    <version>0.9.5-SNAPSHOT</version>
+    <version>0.9.5</version>
   </parent>
   <artifactId>velocity-templating-engine</artifactId>
   <packaging>jar</packaging>
