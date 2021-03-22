@@ -47,7 +47,7 @@
         <artifactId>maven-import-bom</artifactId>
         <type>pom</type>
         <scope>import</scope>
-        <version>${maven.version}.3</version>
+        <version>${maven.version}.4</version>
       </dependency>
       <dependency>
         <groupId>org.infrastructurebuilder.util</groupId>
