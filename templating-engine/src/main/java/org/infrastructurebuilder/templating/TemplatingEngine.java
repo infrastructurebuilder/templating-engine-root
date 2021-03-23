@@ -65,7 +65,7 @@ public interface TemplatingEngine {
   Optional<MavenProject> getProject();
 
   /**
-   * Map<String,Object> and likely to be turned into String, Object.toString() map later
+   * Map String--Object and likely to be turned into String, Object.toString() map later
    * @return
    */
   Map<String,Object> getProperties();
