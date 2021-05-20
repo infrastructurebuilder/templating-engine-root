@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import org.apache.maven.project.MavenProject;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;

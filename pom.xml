@@ -24,10 +24,14 @@
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <version>10-SNAPSHOT</version>
 =======
     <version>47</version>
 >>>>>>> 4c38e592a4ff9d0e8fe34aaa89be0de7ecfe845d
+=======
+    <version>52</version>
+>>>>>>> develop
   </parent>
   <groupId>org.infrastructurebuilder.templating</groupId>
   <artifactId>templating-engine-root</artifactId>
@@ -58,7 +62,7 @@
       <dependency>
         <groupId>org.infrastructurebuilder.util</groupId>
         <artifactId>ibcore-bom</artifactId>
-        <version>0.17.3.0-SNAPSHOT</version>
+        <version>0.17.3.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
