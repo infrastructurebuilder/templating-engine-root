@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,9 +41,9 @@ import org.apache.maven.monitor.logging.DefaultLog;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.infrastructurebuilder.util.config.StringListSupplier;
-import org.infrastructurebuilder.util.files.DefaultIBDirScannerSupplier;
-import org.infrastructurebuilder.util.files.IBDirScannerSupplier;
+import org.infrastructurebuilder.util.core.IBDirScannerSupplier;
+import org.infrastructurebuilder.util.core.StringListSupplier;
+import org.infrastructurebuilder.util.filescanner.DefaultIBDirScannerSupplier;
 
 /**
  * @author mykel.alvis

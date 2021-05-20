@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@ package org.infrastructurebuilder.templating;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 
 import org.apache.maven.project.MavenProject;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +15,13 @@
  */
 package org.infrastructurebuilder.templating.velocity;
 
-import static org.infrastructurebuilder.util.IBUtils.readFile;
-import static org.infrastructurebuilder.util.IBUtils.writeString;
+import static org.infrastructurebuilder.util.core.IBUtils.readFile;
+import static org.infrastructurebuilder.util.core.IBUtils.writeString;
 
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -33,7 +32,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.infrastructurebuilder.templating.AbstractTemplatingEngine;
-import org.infrastructurebuilder.util.PropertiesSupplier;
 
 public class VelocityExecutionComponent extends AbstractTemplatingEngine<VelocityEngine> {
 

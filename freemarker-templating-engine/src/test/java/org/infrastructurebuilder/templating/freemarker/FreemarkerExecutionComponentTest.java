@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ import java.util.Properties;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.infrastructurebuilder.templating.TemplatingEngineException;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -65,7 +65,7 @@ public class FreemarkerExecutionComponentTest {
 
   private Path testClasses;
 
-  private Map<String,Object> ppp;
+  private Map<String, Object> ppp;
 
   @Before
   public void setUp() throws Exception {
@@ -81,7 +81,7 @@ public class FreemarkerExecutionComponentTest {
     final MavenProject mp = new MavenProject(model);
     engineSupplier.setProject(mp);
     engineSupplier.setSourcePathRoot(testClasses);
-    Map<String,Object >o  = new HashMap<>();
+    Map<String, Object> o = new HashMap<>();
     o.put("A", "gggggg");
     engineSupplier.setProperties(o);
     engineSupplier.setExecutionSource(testClasses.resolve("execFiles"));
@@ -95,7 +95,7 @@ public class FreemarkerExecutionComponentTest {
 
   @Test
   public void testCreateContextNoProject() {
-    final Map<String,Object> m = ppp;
+    final Map<String, Object> m = ppp;
     assertNotNull(FreemarkerExecutionComponent.createContext(Optional.empty(), m));
   }
 
@@ -125,5 +125,6 @@ public class FreemarkerExecutionComponentTest {
   public void testVelocityExecutionComponent() {
     assertNotNull(engineSupplier.get());
   }
+
 
 }

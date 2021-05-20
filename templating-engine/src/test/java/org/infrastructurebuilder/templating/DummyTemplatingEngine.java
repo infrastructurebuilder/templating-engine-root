@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,12 +21,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.function.Supplier;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.core.IBUtils;
 
 public class DummyTemplatingEngine extends AbstractTemplatingEngine<DummyPassThru> implements TemplatingEngine {
 
