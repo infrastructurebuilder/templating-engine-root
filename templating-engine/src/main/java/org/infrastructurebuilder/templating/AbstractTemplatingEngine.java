@@ -42,8 +42,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.infrastructurebuilder.util.config.StringListSupplier;
-import org.infrastructurebuilder.util.files.DefaultIBDirScannerSupplier;
 import org.infrastructurebuilder.util.files.IBDirScannerSupplier;
+import org.infrastructurebuilder.util.files.impl.DefaultIBDirScannerSupplier;
 
 /**
  * @author mykel.alvis

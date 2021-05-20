@@ -17,7 +17,6 @@ package org.infrastructurebuilder.templating;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 
 import org.apache.maven.project.MavenProject;
 

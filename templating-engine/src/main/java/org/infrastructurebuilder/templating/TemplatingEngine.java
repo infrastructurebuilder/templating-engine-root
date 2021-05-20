@@ -17,12 +17,10 @@ package org.infrastructurebuilder.templating;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 
 import org.apache.maven.project.MavenProject;
 
@@ -67,7 +65,7 @@ public interface TemplatingEngine {
   Optional<MavenProject> getProject();
 
   /**
-   * Map<String,Object> and likely to be turned into String, Object.toString() map later
+   * Map String--Object and likely to be turned into String, Object.toString() map later
    * @return
    */
   Map<String,Object> getProperties();

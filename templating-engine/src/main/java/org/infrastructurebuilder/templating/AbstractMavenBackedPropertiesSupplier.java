@@ -21,10 +21,8 @@ import static java.util.Optional.ofNullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.maven.project.MavenProject;
-import org.infrastructurebuilder.util.PropertiesSupplier;
 
 /**
  * This is the abstract root of a PropertieSupplier that generates a new Properties set
