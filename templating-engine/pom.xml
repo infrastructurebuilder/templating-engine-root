@@ -39,6 +39,8 @@
       <groupId>org.infrastructurebuilder</groupId>
       <artifactId>ibcore-files</artifactId>
     </dependency>
+  <!-- <dependency> <groupId>org.infrastructurebuilder</groupId> <artifactId>ibcore</artifactId>
+    </dependency> -->
     <dependency>
       <groupId>org.infrastructurebuilder</groupId>
       <artifactId>ibcore</artifactId>

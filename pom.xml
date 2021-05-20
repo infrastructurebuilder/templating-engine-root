@@ -49,7 +49,7 @@
         <artifactId>maven-import-bom</artifactId>
         <type>pom</type>
         <scope>import</scope>
-        <version>${maven.version}.3</version>
+        <version>${maven.bom.version}</version>
       </dependency>
       <dependency>
         <groupId>org.infrastructurebuilder.util</groupId>
