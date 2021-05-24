@@ -15,9 +15,13 @@
  */
 package org.infrastructurebuilder.templating;
 
+import com.mscharhag.et.ET;
+import com.mscharhag.et.ExceptionTranslator;
+
 public class TemplatingEngineException extends RuntimeException {
 
   private static final long serialVersionUID = -4074934259001259947L;
+  public static ExceptionTranslator et = ET.newConfiguration().translate(Exception.class).to(TemplatingEngineException.class).done();
 
   public TemplatingEngineException() {
   }
