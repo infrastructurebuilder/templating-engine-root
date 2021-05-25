@@ -52,16 +52,16 @@ import org.infrastructurebuilder.util.filescanner.DefaultIBDirScannerSupplier;
  */
 abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
 
-  public final static List<String> SCM_NAMES = Arrays.asList(".svn", ".git", "cvs");
+  public final static List<String>        SCM_NAMES           = Arrays.asList(".svn", ".git", "cvs");
 
   private static final Collection<String> DEFAULT_SOURCE_LIST = new ArrayList<>(
-      java.util.Arrays.asList("java", "kt", "scala", "groovy", "clj"));
+      java.util.Arrays.asList("java", "kt", "scala", "groovy", "clj", "go", "js", "rust"));
 
   public static final boolean endsWith(final File f, final Collection<String> extensions) {
     final String s = f.getAbsolutePath().toLowerCase();
     if (extensions != null) {
       for (final String e : extensions) {
-        if (s.endsWith(e))
+        if (s.endsWith("." + e))
           return true;
       }
     }
@@ -73,8 +73,8 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     project.map(MavenProject::getProperties).ifPresent(pproj -> {
       pproj.stringPropertyNames().forEach(key -> p.put(key, pproj.getProperty(key)));
     });
-    final Map<String, Object> gp = mergeProperties(p, properties);
-    final TreeMap<String, Object> m = new TreeMap<>();
+    final Map<String, Object>     gp = mergeProperties(p, properties);
+    final TreeMap<String, Object> m  = new TreeMap<>();
     getPropertyNames(gp).stream().sorted().forEach(n -> m.put(n, gp.get(n)));
 
     return String.join("\n", m.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
@@ -89,7 +89,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
   public static final Path getOutputFile(final Path templateRelPath, final Path executionSource,
       final Path outputDirectory) throws IOException {
 
-    String rel = templateRelPath.toString();
+    String rel    = templateRelPath.toString();
     String relLow = rel.toLowerCase();
     for (final String suf : new String[] { ".vm", ".velo", ".velocity" }) {
       if (relLow.endsWith(suf)) {
@@ -104,24 +104,25 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     return SCM_NAMES.contains(Optional.ofNullable(f).map(File::getName).map(String::toLowerCase).orElse("_FALSE"));
   }
 
-  //  public static void listVeloFiles(final File f, final Set<File> out, final boolean includeDotFiles,
-  //      final boolean includeHidden) throws IOException {
-  //    if (f.isHidden() && !includeHidden)
-  //      return;
+  // public static void listVeloFiles(final File f, final Set<File> out, final
+  // boolean includeDotFiles,
+  // final boolean includeHidden) throws IOException {
+  // if (f.isHidden() && !includeHidden)
+  // return;
   //
-  //    final String n = f.getName().toLowerCase();
-  //    if (f.isDirectory()) {
-  //      if (isSCMDir(f))
-  //        return;
-  //      for (final File ff : f.listFiles()) {
-  //        listVeloFiles(ff.getAbsoluteFile(), out, includeDotFiles, includeHidden);
-  //      }
-  //    } else if (f.isFile()) {
-  //      if (includeDotFiles || !n.startsWith(".")) {
-  //        out.add(f);
-  //      }
-  //    }
-  //  }
+  // final String n = f.getName().toLowerCase();
+  // if (f.isDirectory()) {
+  // if (isSCMDir(f))
+  // return;
+  // for (final File ff : f.listFiles()) {
+  // listVeloFiles(ff.getAbsoluteFile(), out, includeDotFiles, includeHidden);
+  // }
+  // } else if (f.isFile()) {
+  // if (includeDotFiles || !n.startsWith(".")) {
+  // out.add(f);
+  // }
+  // }
+  // }
 
   public static final String prependDot(String s) {
     if (s != null && !s.startsWith(".")) {
@@ -131,11 +132,11 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
   }
 
   public static final String processComments(final String source, final Function<String, String> processor) {
-    final Pattern p = Pattern.compile("(?m)(?s)/\\*\\*?.*?\\*/");
-    final Matcher m = p.matcher(source);
+    final Pattern      p  = Pattern.compile("(?m)(?s)/\\*\\*?.*?\\*/");
+    final Matcher      m  = p.matcher(source);
     final StringBuffer sb = new StringBuffer();
     while (m.find()) {
-      final String comment = m.group();
+      final String comment     = m.group();
       final String replacement = processor.apply(comment);
       m.appendReplacement(sb, "");
       sb.append(replacement);
@@ -152,27 +153,27 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     return processComments(source, f -> f.replaceAll("\\\\#", "#"));
   }
 
-  private final Path executionSource;
+  private final Path                executionSource;
 
-  private final Path sourcePathRoot;
+  private final Path                sourcePathRoot;
 
-  private final boolean includeDotFiles;
+  private final boolean             includeDotFiles;
 
-  private final Log log;
+  private final Log                 log;
 
-  private final Collection<String> _sourceExtensions;
+  private final Collection<String>  _sourceExtensions;
 
-  private final Path sourcesOutputDirectory;
+  private final Path                sourcesOutputDirectory;
 
-  private final MavenProject project;
+  private final MavenProject        project;
 
   private final Map<String, Object> properties;
 
-  private final boolean includeHiddenFiles;
+  private final boolean             includeHiddenFiles;
 
-  private final boolean caseSensitive;
+  private final boolean             caseSensitive;
 
-  private final Optional<Path> prefixPath;
+  private final Optional<Path>      prefixPath;
 
   /**
    * @param src
@@ -233,9 +234,9 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
 
   @Override
   public Optional<String> execute() throws TemplatingEngineException {
-    final StringListSupplier includes = () -> Arrays.asList("**/*");
-    final StringListSupplier excludes = () -> new ArrayList<>(SCM_NAMES);
-    final IBDirScannerSupplier ss = new DefaultIBDirScannerSupplier(
+    final StringListSupplier   includes = () -> Arrays.asList("**/*");
+    final StringListSupplier   excludes = () -> new ArrayList<>(SCM_NAMES);
+    final IBDirScannerSupplier ss       = new DefaultIBDirScannerSupplier(
         //
         () -> getExecutionSource(),
         //
@@ -250,7 +251,7 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
         () -> !isIncludeDotFiles(),
         //
         () -> isCaseSensitive());
-    final List<Path> paths = ss.get().scan()
+    final List<Path>           paths    = ss.get().scan()
         // Fetch the "included" files
         .get(true)
         //
@@ -287,8 +288,8 @@ abstract public class AbstractTemplatingEngine<T> implements TemplatingEngine {
     for (final Path file : paths) {
       try {
         final Path outputDirectory = getOutputDirectoryForFile(file);
-        final Path outFile = getOutputFile(file, getExecutionSource(), outputDirectory);
-        String originalFile = getSourcePathRoot().resolve(file).toString();
+        final Path outFile         = getOutputFile(file, getExecutionSource(), outputDirectory);
+        String     originalFile    = getSourcePathRoot().resolve(file).toString();
         getLog().debug("Executing template '" + originalFile + "'...");
         getLog().info("Writing " + originalFile + " to " + outFile);
         final T engine = createEngine(getSourcePathRoot());

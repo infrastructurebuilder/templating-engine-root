@@ -54,9 +54,15 @@ abstract public class AbstractMavenBackedPropertiesSupplier implements MSOSuppli
     return this;
   }
 
-  @SuppressWarnings("deprecation")
   public AbstractMavenBackedPropertiesSupplier setMavenProject(final MavenProject project) {
-    this.project = ofNullable(project).map(MavenProject::new);
+    this.project = ofNullable(project).map(m -> {
+      try {
+        return (MavenProject)m.clone();
+      } catch (CloneNotSupportedException e) {
+        // literally never happens
+        return null;
+      }
+    });
     return this;
   }
 }
